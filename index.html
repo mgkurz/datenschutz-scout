@@ -1,1 +1,1943 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenschutz-Scout – Interaktive Lernübung</title>
+<style>
+/* ============================================
+   CSS Custom Properties & Reset
+   ============================================ */
+:root {
+  --clr-primary: #2563eb;
+  --clr-primary-light: #dbeafe;
+  --clr-primary-dark: #1e40af;
+  --clr-success: #16a34a;
+  --clr-success-light: #dcfce7;
+  --clr-warning: #d97706;
+  --clr-warning-light: #fef3c7;
+  --clr-danger: #dc2626;
+  --clr-danger-light: #fee2e2;
+  --clr-bg: #f8fafc;
+  --clr-surface: #ffffff;
+  --clr-text: #1e293b;
+  --clr-text-muted: #64748b;
+  --clr-border: #e2e8f0;
+  --clr-highlight: #8b5cf6;
+  --clr-highlight-light: #ede9fe;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+  --transition: 0.25s ease;
+  --font-main: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --max-width: 780px;
+}
 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  line-height: 1.6;
+  font-size: 16px;
+  min-height: 100vh;
+}
+
+/* ============================================
+   Layout
+   ============================================ */
+.app-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* ============================================
+   Progress Bar (Top)
+   ============================================ */
+.progress-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.progress-step {
+  flex: 1;
+  height: 6px;
+  background: var(--clr-border);
+  border-radius: 3px;
+  transition: background var(--transition);
+  position: relative;
+}
+
+.progress-step.completed { background: var(--clr-success); }
+.progress-step.active { background: var(--clr-primary); }
+
+.progress-label {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  text-align: center;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* ============================================
+   Phase Header
+   ============================================ */
+.phase-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.phase-header .phase-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--clr-primary);
+  background: var(--clr-primary-light);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.phase-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  margin-bottom: 4px;
+}
+
+.phase-header p {
+  color: var(--clr-text-muted);
+  font-size: 0.95rem;
+}
+
+/* ============================================
+   Cards & Panels
+   ============================================ */
+.card {
+  background: var(--clr-surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  border: 1px solid var(--clr-border);
+}
+
+.card.highlight {
+  border-left: 4px solid var(--clr-primary);
+}
+
+.info-box {
+  background: var(--clr-primary-light);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin: 12px 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.info-box.warning {
+  background: var(--clr-warning-light);
+}
+
+.info-box.success {
+  background: var(--clr-success-light);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: var(--font-main);
+  text-align: center;
+  justify-content: center;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--clr-primary);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--clr-primary);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--clr-primary-dark); }
+.btn-primary:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--clr-surface);
+  color: var(--clr-primary);
+  border: 2px solid var(--clr-primary);
+}
+.btn-secondary:hover { background: var(--clr-primary-light); }
+
+.btn-success {
+  background: var(--clr-success);
+  color: #fff;
+}
+.btn-success:hover { background: #15803d; }
+
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+.btn-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-group.center { justify-content: center; }
+
+/* ============================================
+   Security Points Display
+   ============================================ */
+.security-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--clr-surface);
+  border: 2px solid var(--clr-primary);
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--clr-primary);
+  position: sticky;
+  top: 8px;
+  z-index: 10;
+  width: fit-content;
+  margin: 0 auto 16px auto;
+  box-shadow: var(--shadow-md);
+}
+
+.shield-icon {
+  font-size: 1.4rem;
+}
+
+/* ============================================
+   Drag & Drop
+   ============================================ */
+.drag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px;
+  min-height: 60px;
+  justify-content: center;
+}
+
+.drag-item {
+  background: var(--clr-surface);
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  cursor: grab;
+  user-select: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: all var(--transition);
+  touch-action: none;
+}
+
+.drag-item:hover { border-color: var(--clr-primary); transform: translateY(-1px); }
+.drag-item.dragging { opacity: 0.5; }
+.drag-item.correct { border-color: var(--clr-success); background: var(--clr-success-light); }
+.drag-item.wrong { border-color: var(--clr-danger); background: var(--clr-danger-light); }
+
+.drop-zone {
+  min-height: 80px;
+  border: 2px dashed var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: flex-start;
+  transition: all var(--transition);
+}
+
+.drop-zone.over {
+  border-color: var(--clr-primary);
+  background: var(--clr-primary-light);
+}
+
+.drop-zone-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--clr-text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.category-column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.category-columns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.category-header {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-align: center;
+  color: #fff;
+}
+
+.cat-harmlos .category-header { background: var(--clr-success); }
+.cat-sensibel .category-header { background: var(--clr-warning); }
+.cat-hochsensibel .category-header { background: var(--clr-danger); }
+
+/* ============================================
+   Scenario Cards
+   ============================================ */
+.scenario-card {
+  background: var(--clr-surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 16px;
+  border: 1px solid var(--clr-border);
+}
+
+.scenario-header {
+  background: linear-gradient(135deg, var(--clr-primary), var(--clr-highlight));
+  color: #fff;
+  padding: 16px 20px;
+  font-size: 0.88rem;
+}
+
+.scenario-header h3 {
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.scenario-body {
+  padding: 20px;
+}
+
+.scenario-situation {
+  font-style: italic;
+  color: var(--clr-text-muted);
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--clr-bg);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--clr-highlight);
+}
+
+.option-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  background: var(--clr-surface);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: var(--font-main);
+  transition: all var(--transition);
+  line-height: 1.4;
+}
+
+.option-btn:hover:not(:disabled) {
+  border-color: var(--clr-primary);
+  background: var(--clr-primary-light);
+}
+
+.option-btn.selected-correct {
+  border-color: var(--clr-success);
+  background: var(--clr-success-light);
+}
+
+.option-btn.selected-wrong {
+  border-color: var(--clr-danger);
+  background: var(--clr-danger-light);
+}
+
+.option-btn.best-answer {
+  border-color: var(--clr-success);
+  background: var(--clr-success-light);
+}
+
+.option-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.feedback-box {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  display: none;
+}
+
+.feedback-box.good {
+  background: var(--clr-success-light);
+  border-left: 4px solid var(--clr-success);
+}
+
+.feedback-box.okay {
+  background: var(--clr-warning-light);
+  border-left: 4px solid var(--clr-warning);
+}
+
+.feedback-box.bad {
+  background: var(--clr-danger-light);
+  border-left: 4px solid var(--clr-danger);
+}
+
+/* ============================================
+   Daten-Check Steps
+   ============================================ */
+.check-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  counter-reset: step;
+}
+
+.check-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  background: var(--clr-surface);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--clr-border);
+  cursor: pointer;
+  transition: all var(--transition);
+  opacity: 0.5;
+}
+
+.check-step.active {
+  opacity: 1;
+  border-color: var(--clr-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.check-step.done {
+  opacity: 1;
+  border-color: var(--clr-success);
+}
+
+.check-step-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--clr-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+
+.check-step.active .check-step-number {
+  background: var(--clr-primary);
+  color: #fff;
+}
+
+.check-step.done .check-step-number {
+  background: var(--clr-success);
+  color: #fff;
+}
+
+.check-step h4 { font-size: 1rem; margin-bottom: 2px; }
+.check-step p { font-size: 0.88rem; color: var(--clr-text-muted); }
+
+/* ============================================
+   Help Network
+   ============================================ */
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.help-card {
+  background: var(--clr-surface);
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
+}
+
+.help-card:hover, .help-card:focus {
+  border-color: var(--clr-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.help-card .icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+.help-card h4 { font-size: 0.95rem; margin-bottom: 4px; }
+.help-card p { font-size: 0.82rem; color: var(--clr-text-muted); display: none; line-height: 1.5; }
+.help-card.expanded p { display: block; margin-top: 8px; }
+.help-card.expanded {
+  border-color: var(--clr-primary);
+  background: var(--clr-primary-light);
+}
+
+/* ============================================
+   Assessment / Sicherung
+   ============================================ */
+.assessment-section {
+  background: linear-gradient(to bottom, #f0f4ff, var(--clr-bg));
+  border-top: 3px solid var(--clr-primary);
+  padding: 20px 0;
+}
+
+.task-card {
+  background: var(--clr-surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--clr-border);
+}
+
+.task-card h4 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.task-number {
+  font-size: 0.78rem;
+  color: var(--clr-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.attempts-display {
+  display: flex;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.attempt-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--clr-primary);
+  transition: background var(--transition);
+}
+
+.attempt-dot.used { background: var(--clr-border); }
+
+.hint-box {
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--clr-warning-light);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  display: none;
+  line-height: 1.5;
+}
+
+/* Sort items */
+.sort-list {
+  list-style: none;
+  counter-reset: sortitem;
+}
+
+.sort-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  background: var(--clr-surface);
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  user-select: none;
+  font-size: 0.95rem;
+  transition: all var(--transition);
+}
+
+.sort-item:hover { border-color: var(--clr-primary); }
+.sort-item .sort-handle { color: var(--clr-text-muted); font-size: 1.2rem; }
+
+.sort-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.sort-btn {
+  width: 32px;
+  height: 24px;
+  border: 1px solid var(--clr-border);
+  border-radius: 4px;
+  background: var(--clr-bg);
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  font-family: var(--font-main);
+}
+
+.sort-btn:hover:not(:disabled) {
+  background: var(--clr-primary-light);
+  border-color: var(--clr-primary);
+}
+
+.sort-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Freitext */
+.freitext-area {
+  width: 100%;
+  min-height: 80px;
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  resize: vertical;
+  transition: border-color var(--transition);
+}
+
+.freitext-area:focus {
+  outline: none;
+  border-color: var(--clr-primary);
+}
+
+/* ============================================
+   Results / Ergebnisse
+   ============================================ */
+.results-panel {
+  background: var(--clr-surface);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  border: 2px solid var(--clr-primary);
+}
+
+.results-panel h3 {
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin: 16px 0;
+}
+
+.results-table th, .results-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.results-table th {
+  background: var(--clr-bg);
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.results-summary {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 16px;
+  background: var(--clr-primary-light);
+  border-radius: var(--radius-sm);
+  margin: 16px 0;
+}
+
+.merksaetze {
+  background: var(--clr-bg);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.merksaetze h4 { margin-bottom: 8px; }
+.merksaetze ul { padding-left: 20px; }
+.merksaetze li { margin-bottom: 6px; font-size: 0.92rem; }
+
+/* ============================================
+   Phase visibility
+   ============================================ */
+.phase { display: none; }
+.phase.active { display: block; animation: fadeIn 0.3s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Points animation */
+@keyframes pointPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.points-pop { animation: pointPop 0.4s ease; }
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 600px) {
+  .category-columns { flex-direction: column; }
+  .help-grid { grid-template-columns: 1fr; }
+  .btn-group { flex-direction: column; }
+  .drag-item { font-size: 0.85rem; padding: 8px 12px; }
+  .phase-header h2 { font-size: 1.25rem; }
+}
+
+/* ============================================
+   Print Stylesheet
+   ============================================ */
+@media print {
+  body * { visibility: hidden; }
+  .results-print-area, .results-print-area * { visibility: visible; }
+  .results-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20mm;
+    font-size: 11pt;
+  }
+  .results-print-area h3 { font-size: 16pt; }
+  .results-table th, .results-table td { padding: 6px 8px; font-size: 10pt; }
+  .no-print { display: none !important; }
+  .print-header { display: block !important; margin-bottom: 12pt; }
+  .print-header .name-field {
+    border-bottom: 1px solid #000;
+    display: inline-block;
+    width: 200px;
+    margin-left: 8px;
+  }
+  @page { margin: 15mm 20mm; }
+}
+
+.print-header { display: none; }
+
+/* ============================================
+   Checklist (Phase 1)
+   ============================================ */
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+  cursor: pointer;
+}
+
+.checklist-item:hover { background: var(--clr-bg); }
+
+.checklist-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--clr-primary);
+  cursor: pointer;
+}
+
+.checklist-item label {
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+</style>
+</head>
+<body>
+
+<div class="app-container" role="main" aria-label="Datenschutz-Scout – Interaktive Lernübung">
+
+  <!-- Progress Bar -->
+  <nav class="progress-bar" aria-label="Lernfortschritt" id="progressBar"></nav>
+
+  <!-- ============================================
+       PHASE 1: Einstieg
+       ============================================ -->
+  <section class="phase active" id="phase1" aria-label="Einstieg">
+    <div class="phase-header">
+      <span class="phase-tag">Einstieg</span>
+      <h2>🛡️ Werde Datenschutz-Scout!</h2>
+      <p>Finde heraus, wie gut du deine persönlichen Daten im Netz schützt.</p>
+    </div>
+
+    <div class="card highlight">
+      <p><strong>Kurzer Selbst-Check:</strong> Welche dieser Dinge hast du schon einmal online eingegeben oder geteilt? Sei ehrlich – es gibt keine falschen Antworten. Das hier ist nur für dich.</p>
+    </div>
+
+    <div class="card" id="selfCheck">
+      <!-- Filled by JS -->
+    </div>
+
+    <div class="info-box" id="selfCheckResult" style="display:none;"></div>
+
+    <div class="btn-group center">
+      <button class="btn btn-primary" onclick="finishPhase1()">Weiter zum Training →</button>
+    </div>
+  </section>
+
+  <!-- ============================================
+       PHASE 2: Datenkategorien
+       ============================================ -->
+  <section class="phase" id="phase2" aria-label="Datenkategorien">
+    <div class="phase-header">
+      <span class="phase-tag">Wissen aufbauen</span>
+      <h2>📊 Nicht alle Daten sind gleich</h2>
+      <p>Manche Infos sind harmlos, andere können dir schaden. Lerne den Unterschied.</p>
+    </div>
+
+    <div class="card">
+      <p>Persönliche Daten lassen sich in <strong>drei Kategorien</strong> einteilen:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+        <span style="background:var(--clr-success-light);color:var(--clr-success);padding:4px 12px;border-radius:20px;font-weight:600;font-size:0.88rem;">🟢 Eher harmlos</span>
+        <span style="background:var(--clr-warning-light);color:var(--clr-warning);padding:4px 12px;border-radius:20px;font-weight:600;font-size:0.88rem;">🟡 Sensibel</span>
+        <span style="background:var(--clr-danger-light);color:var(--clr-danger);padding:4px 12px;border-radius:20px;font-weight:600;font-size:0.88rem;">🔴 Hochsensibel</span>
+      </div>
+      <p style="font-size:0.9rem;color:var(--clr-text-muted);">„Eher harmlos" heißt nicht, dass du sie jedem geben solltest – nur, dass der Schaden bei Missbrauch geringer ist.</p>
+    </div>
+
+    <div class="card">
+      <p><strong>Ordne die Daten-Beispiele den Kategorien zu.</strong> Ziehe sie in die richtige Spalte (oder tippe zum Auswählen und tippe auf die Kategorie).</p>
+
+      <div class="drag-container" id="dragSource">
+        <!-- Filled by JS -->
+      </div>
+
+      <div class="category-columns" style="margin-top:16px;">
+        <div class="category-column cat-harmlos">
+          <div class="category-header">🟢 Eher harmlos</div>
+          <div class="drop-zone" id="dropHarmlos" data-category="harmlos" aria-label="Kategorie: Eher harmlos"></div>
+        </div>
+        <div class="category-column cat-sensibel">
+          <div class="category-header">🟡 Sensibel</div>
+          <div class="drop-zone" id="dropSensibel" data-category="sensibel" aria-label="Kategorie: Sensibel"></div>
+        </div>
+        <div class="category-column cat-hochsensibel">
+          <div class="category-header">🔴 Hochsensibel</div>
+          <div class="drop-zone" id="dropHochsensibel" data-category="hochsensibel" aria-label="Kategorie: Hochsensibel"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feedback-box" id="dragFeedback"></div>
+
+    <div class="btn-group center">
+      <button class="btn btn-primary" id="btnPhase2" onclick="checkDragDrop()" disabled>Auswahl überprüfen ✓</button>
+    </div>
+  </section>
+
+  <!-- ============================================
+       PHASE 3: Der Daten-Check
+       ============================================ -->
+  <section class="phase" id="phase3" aria-label="Der Daten-Check">
+    <div class="phase-header">
+      <span class="phase-tag">Werkzeug</span>
+      <h2>🔍 Der Daten-Check</h2>
+      <p>Vier Fragen, die du dir <strong>immer</strong> stellen solltest, bevor du Daten eingibst.</p>
+    </div>
+
+    <div class="card">
+      <p>Klicke dich Schritt für Schritt durch. Merke dir die vier Fragen – du wirst sie gleich brauchen!</p>
+    </div>
+
+    <div class="check-steps" id="checkSteps">
+      <!-- Filled by JS -->
+    </div>
+
+    <div class="info-box success" id="checkComplete" style="display:none;">
+      <strong>💪 Du hast jetzt dein Werkzeug:</strong> Wer fragt? → Warum? → Muss ich das? → Was kann passieren?<br>
+      Wende den Daten-Check in den nächsten Szenarien an!
+    </div>
+
+    <div class="btn-group center">
+      <button class="btn btn-primary" id="btnPhase3" onclick="goToPhase(4)" style="display:none;">Weiter zu den Szenarien →</button>
+    </div>
+  </section>
+
+  <!-- ============================================
+       PHASE 4: Szenarien-Parcours
+       ============================================ -->
+  <section class="phase" id="phase4" aria-label="Szenarien-Parcours">
+    <div class="phase-header">
+      <span class="phase-tag">Anwenden</span>
+      <h2>🎯 Szenarien-Parcours</h2>
+      <p>Triff kluge Entscheidungen in Alltagssituationen. Sammle Sicherheitspunkte!</p>
+    </div>
+
+    <div class="security-display" id="securityDisplay">
+      <span class="shield-icon">🛡️</span>
+      <span id="securityPoints">0</span> / 15 Punkte
+    </div>
+
+    <div id="scenarioContainer">
+      <!-- Filled by JS -->
+    </div>
+
+    <div class="btn-group center">
+      <button class="btn btn-primary" id="btnPhase4" onclick="goToPhase(5)" style="display:none;">Weiter zum Hilfe-Netzwerk →</button>
+    </div>
+  </section>
+
+  <!-- ============================================
+       PHASE 5: Hilfe-Netzwerk
+       ============================================ -->
+  <section class="phase" id="phase5" aria-label="Hilfe-Netzwerk">
+    <div class="phase-header">
+      <span class="phase-tag">Hilfe holen</span>
+      <h2>🤝 Dein Hilfe-Netzwerk</h2>
+      <p>Wenn etwas schiefgeht: Du bist nicht allein. Klicke auf die Karten, um mehr zu erfahren.</p>
+    </div>
+
+    <div class="info-box">
+      <strong>Wichtig:</strong> Hilfe holen ist kein Zeichen von Schwäche – es ist das Klügste, was du tun kannst. Niemand wird dir einen Vorwurf machen.
+    </div>
+
+    <div class="help-grid" id="helpGrid">
+      <!-- Filled by JS -->
+    </div>
+
+    <div class="info-box warning" style="margin-top:16px;">
+      <strong>Faustregel:</strong> Je schneller du Hilfe holst, desto besser. Warte nicht, bis es schlimmer wird. Und: Wenn die erste Person nicht hilft, frag die nächste!
+    </div>
+
+    <div class="btn-group center">
+      <button class="btn btn-primary" onclick="goToPhase(6)">Weiter zur Sicherung 📝</button>
+    </div>
+  </section>
+
+  <!-- ============================================
+       PHASE 6: Sicherung
+       ============================================ -->
+  <section class="phase" id="phase6" aria-label="Sicherung">
+    <div class="assessment-section">
+      <div class="phase-header">
+        <span class="phase-tag">📝 Sicherung</span>
+        <h2>Was hast du gelernt?</h2>
+        <p>Zeige, was du draufhast. Bei Fehlern bekommst du Tipps.</p>
+      </div>
+
+      <div style="background:var(--clr-primary-light);border-radius:var(--radius-sm);padding:8px 16px;text-align:center;margin-bottom:16px;font-size:0.9rem;">
+        Fortschritt: <strong><span id="assessProgress">0</span> / 5</strong> Aufgaben
+      </div>
+
+      <div id="assessmentContainer">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Results (hidden until done) -->
+      <div id="resultsArea" style="display:none;">
+        <div class="results-print-area" id="resultsPrintArea">
+          <div class="print-header">
+            <strong>Datenschutz-Scout – Ergebnisübersicht</strong><br>
+            Datum: <span id="printDate"></span><br>
+            Name: <span class="name-field">&nbsp;</span>
+          </div>
+
+          <div class="results-panel">
+            <h3>🏆 Dein Ergebnis</h3>
+
+            <div class="results-summary" id="resultsSummary"></div>
+
+            <div class="merksaetze">
+              <h4>📌 Das Wichtigste auf einen Blick</h4>
+              <ul>
+                <li><strong>Datenkategorien:</strong> Nicht alle Daten sind gleich – unterscheide zwischen harmlosen, sensiblen und hochsensiblen Informationen.</li>
+                <li><strong>Daten-Check:</strong> Frag immer: Wer fragt? Warum? Muss ich das? Was kann passieren?</li>
+                <li><strong>Alltagsrisiken:</strong> Apps, Gewinnspiele, Social Media, KI-Chatbots und Gaming-Chats sind typische Situationen, in denen Daten abgegriffen werden.</li>
+                <li><strong>Hilfe-Netzwerk:</strong> Lehrkräfte, Vertrauenslehrkräfte, Schulsozialarbeit, Eltern und erfahrene ältere Schülerinnen und Schüler können helfen.</li>
+                <li><strong>Schnell handeln:</strong> Je früher du Hilfe holst, desto besser lässt sich Schaden begrenzen.</li>
+              </ul>
+            </div>
+
+            <table class="results-table" id="resultsTable">
+              <thead>
+                <tr><th>Aufgabe</th><th>Deine Antwort</th><th>Lösung</th><th>Versuche</th><th>Status</th></tr>
+              </thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="btn-group center no-print" style="margin-top:20px;">
+          <button class="btn btn-secondary" onclick="printResults()">🖨️ Lernzettel drucken</button>
+          <button class="btn btn-primary" onclick="downloadMarkdown()">📥 Zusammenfassung als Markdown</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================
+   DATA & STATE
+   ============================================ */
+
+const PHASES = [
+  { id: 1, label: 'Einstieg' },
+  { id: 2, label: 'Kategorien' },
+  { id: 3, label: 'Daten-Check' },
+  { id: 4, label: 'Szenarien' },
+  { id: 5, label: 'Hilfe-Netzwerk' },
+  { id: 6, label: 'Sicherung' }
+];
+
+let currentPhase = 1;
+let securityPoints = 0;
+
+// Self-check items (Phase 1)
+const SELF_CHECK_ITEMS = [
+  'Meinen echten Namen',
+  'Meine Schule',
+  'Meine Adresse oder Straße',
+  'Meine Handynummer',
+  'Fotos von mir',
+  'Mein Geburtsdatum',
+  'Meinen Standort (GPS)',
+  'Ein persönliches Problem in einen KI-Chatbot getippt',
+  'Mein Passwort mit jemandem geteilt'
+];
+
+// Drag & Drop items (Phase 2)
+const DRAG_ITEMS = [
+  { text: 'Lieblingsfarbe', category: 'harmlos' },
+  { text: 'Vorname', category: 'harmlos' },
+  { text: 'Lieblingsfach', category: 'harmlos' },
+  { text: 'Handynummer', category: 'sensibel' },
+  { text: 'Name der Schule', category: 'sensibel' },
+  { text: 'Foto von dir', category: 'sensibel' },
+  { text: 'Geburtsdatum', category: 'sensibel' },
+  { text: 'Wohnadresse', category: 'hochsensibel' },
+  { text: 'Passwort', category: 'hochsensibel' },
+  { text: 'Intime Fotos', category: 'hochsensibel' },
+  { text: 'Gesundheitsdaten', category: 'hochsensibel' }
+];
+
+// Daten-Check steps (Phase 3)
+const CHECK_STEPS = [
+  {
+    title: '1. Wer fragt?',
+    text: 'Kenne ich den Absender? Ist die Website oder App seriös? Habe ich die Adresse selbst eingegeben oder bin ich über einen Link gekommen?'
+  },
+  {
+    title: '2. Warum?',
+    text: 'Wofür werden meine Daten gebraucht? Steht das irgendwo erklärt? Klingt die Begründung logisch – oder soll ich nur schnell was eingeben?'
+  },
+  {
+    title: '3. Muss ich das?',
+    text: 'Kann ich den Dienst auch ohne diese Daten nutzen? Welche Felder sind Pflicht, welche freiwillig? Kann ich etwas weglassen oder eine Fantasie-Angabe machen?'
+  },
+  {
+    title: '4. Was kann passieren?',
+    text: 'Was wäre das Schlimmste, wenn diese Daten in falsche Hände geraten? Könnte mich jemand damit finden, erpressen oder bloßstellen?'
+  }
+];
+
+// Scenarios (Phase 4)
+const SCENARIOS = [
+  {
+    title: 'Die neue App',
+    icon: '📱',
+    situation: 'Du lädst eine beliebte Foto-App herunter. Beim ersten Start will sie Zugriff auf deine Kontakte, deinen Standort, deine Kamera und dein Mikrofon. Alle deine Freundinnen und Freunde nutzen die App bereits.',
+    options: [
+      { text: 'Klar, ich erlaube alles – meine Freundinnen und Freunde haben das auch gemacht.', points: 0, quality: 'bad', feedback: 'Nur weil andere es machen, heißt das nicht, dass es schlau ist. Eine Foto-App braucht keinen Zugriff auf deine Kontakte oder deinen Standort.' },
+      { text: 'Ich erlaube nur die Kamera – den Rest lehne ich ab und schaue, ob die App trotzdem funktioniert.', points: 3, quality: 'good', feedback: 'Perfekt! Eine Foto-App braucht die Kamera, aber nicht deine Kontakte oder deinen Standort. Immer nur das Minimum erlauben.' },
+      { text: 'Ich erlaube Kamera und Standort, aber nicht die Kontakte.', points: 1, quality: 'okay', feedback: 'Guter Anfang, aber wozu braucht eine Foto-App deinen Standort? Jede Berechtigung einzeln hinterfragen!' }
+    ]
+  },
+  {
+    title: 'Das Gewinnspiel',
+    icon: '🎁',
+    situation: 'Im Klassenchat teilt jemand einen Link: „Krass! Gewinne das neue iPhone – du musst nur Name, Adresse und Handynummer eingeben!" Der Link sieht etwas komisch aus: gewinne-jetzt.xyz.',
+    options: [
+      { text: 'Ich gebe meine Daten ein – ein iPhone wäre cool!', points: 0, quality: 'bad', feedback: 'Das ist mit sehr hoher Wahrscheinlichkeit Betrug. Seriöse Gewinnspiele laufen nicht über seltsame Links im Chat. Deine Daten landen bei Unbekannten.' },
+      { text: 'Ich klicke nicht auf den Link und warne die anderen im Chat, dass das Betrug sein könnte.', points: 3, quality: 'good', feedback: 'Genau richtig! Komische Domain (.xyz), unbekannter Absender, zu gut um wahr zu sein – alle Warnzeichen da. Gut, dass du auch die anderen warnst!' },
+      { text: 'Ich klicke auf den Link, um mir die Seite mal anzuschauen, gebe aber nichts ein.', points: 1, quality: 'okay', feedback: 'Besser als Daten einzugeben, aber: Schon das Klicken auf einen betrügerischen Link kann riskant sein (Schadsoftware, Tracking). Lieber gleich ignorieren.' }
+    ]
+  },
+  {
+    title: 'Das Klassenfoto',
+    icon: '📸',
+    situation: 'Nach dem Wandertag will eine Mitschülerin ein Gruppenfoto auf Instagram posten. Alle sind drauf, auch du. Sie fragt nicht vorher – sie postet einfach und markiert alle.',
+    options: [
+      { text: 'Ist doch normal – mir egal.', points: 0, quality: 'bad', feedback: 'Dein Bild, dein Recht! Niemand darf Fotos von dir ohne deine Zustimmung öffentlich posten. Das gilt auch unter Freundinnen und Freunden und ist sogar gesetzlich so (Recht am eigenen Bild).' },
+      { text: 'Ich sage ihr freundlich, dass sie mich vorher hätte fragen müssen, und bitte sie, das Foto zu entfernen oder mich zu entmarkieren.', points: 3, quality: 'good', feedback: 'Genau richtig. Du hast ein Recht am eigenen Bild. Freundlich, aber bestimmt – das ist kein Streit, sondern dein gutes Recht.' },
+      { text: 'Ich entmarkiere mich einfach still und sage nichts.', points: 1, quality: 'okay', feedback: 'Immerhin etwas, aber das Foto ist trotzdem noch da. Andere können dich darauf sehen. Besser: direkt ansprechen.' }
+    ]
+  },
+  {
+    title: 'Die KI als Kummerkasten',
+    icon: '🤖',
+    situation: 'Deine Freundin hatte Streit mit einer Lehrerin. Sie tippt in einen KI-Chatbot: „Frau Müller von der Schillerschule in Frankfurt hat mich vor der ganzen Klasse 7b bloßgestellt. Ich heiße Lisa M. und möchte mich beschweren. Was soll ich tun?"',
+    options: [
+      { text: 'Gute Idee, die KI kann bestimmt helfen.', points: 0, quality: 'bad', feedback: 'Gefährlich! Lisa hat echte Namen, Schule, Klasse und die Lehrkraft eingegeben. Diese Daten können gespeichert und weiterverarbeitet werden. KI-Chatbots sind keine Vertrauenspersonen!' },
+      { text: 'Ich sage Lisa, dass sie bei der KI keine echten Namen und Orte eingeben soll – und schlage vor, mit der Vertrauenslehrkraft zu reden.', points: 3, quality: 'good', feedback: 'Perfekt! KI-Chatbots kann man nutzen, aber ohne echte Namen, Schulen und persönliche Details. Für echte Probleme braucht man echte Menschen.' },
+      { text: 'Ich sage ihr, sie soll wenigstens den Nachnamen weglassen.', points: 1, quality: 'okay', feedback: 'Ein Schritt in die richtige Richtung, aber: auch Vorname + Schule + Klasse ist schon sehr viel. Am besten: alles anonymisieren oder ganz auf eine echte Vertrauensperson setzen.' }
+    ]
+  },
+  {
+    title: 'Der Gaming-Chat',
+    icon: '🎮',
+    situation: 'Du spielst ein Online-Spiel. Ein Mitspieler, mit dem du seit zwei Wochen zockst, fragt: „Hey, aus welcher Stadt kommst du? Wir könnten uns mal treffen und zusammen zocken!"',
+    options: [
+      { text: 'Ich sage ihm meine Stadt – wir kennen uns ja schon ein bisschen.', points: 0, quality: 'bad', feedback: 'Zwei Wochen online spielen heißt nicht, jemanden zu kennen. Du weißt nicht, wer wirklich hinter dem Account steckt. Niemals Wohnort oder andere persönliche Infos an Online-Bekanntschaften geben.' },
+      { text: 'Ich sage etwas Vages wie „aus dem Süden" und wechsle das Thema. Wenn er weiter bohrt, ist das ein Warnzeichen.', points: 3, quality: 'good', feedback: 'Genau richtig. Vage bleiben ist völlig okay. Wenn jemand nicht locker lässt und immer mehr wissen will, ist das ein klares Warnsignal.' },
+      { text: 'Ich sage ihm mein Bundesland, aber nicht die genaue Stadt.', points: 1, quality: 'okay', feedback: 'Besser als die Stadt, aber je weniger persönliche Infos, desto sicherer. Online-Bekanntschaften verdienen nicht automatisch Vertrauen.' }
+    ]
+  }
+];
+
+// Help Network (Phase 5)
+const HELP_CONTACTS = [
+  {
+    icon: '👩‍🏫',
+    title: 'Lehrkräfte',
+    detail: 'Deine Klassen- oder Fachlehrkraft ist oft die erste Anlaufstelle. Sie kann einschätzen, wie ernst die Lage ist, und weiß, welche nächsten Schritte nötig sind.'
+  },
+  {
+    icon: '🤝',
+    title: 'Vertrauenslehrkraft',
+    detail: 'Speziell dafür da, wenn du ein Problem hast, über das du nicht mit allen reden willst. Vertraulich und ohne Vorwürfe. Jede Schule hat mindestens eine.'
+  },
+  {
+    icon: '🧑‍💼',
+    title: 'Schulsozialarbeit',
+    detail: 'Profis für schwierige Situationen – Mobbing, Erpressung, Angst. Sie können auch außerhalb der Schule vermitteln und kennen weitere Hilfsangebote.'
+  },
+  {
+    icon: '👨‍👩‍👧',
+    title: 'Eltern / Erziehungsberechtigte',
+    detail: 'Auch wenn es unangenehm ist: Eltern können am meisten bewirken, z.B. bei der Polizei, bei Anwälten oder beim Kontakt mit Plattformen. Sie stehen auf deiner Seite.'
+  },
+  {
+    icon: '🎓',
+    title: 'Ältere Schülerinnen und Schüler',
+    detail: 'Medienscouts, Paten, ältere Geschwister an der Schule – sie kennen die Situationen oft aus eigener Erfahrung und können auf Augenhöhe helfen.'
+  },
+  {
+    icon: '📞',
+    title: 'Externe Beratung',
+    detail: 'Nummer gegen Kummer: 116 111 (anonym, kostenlos). Online: jugend.support. Auch wenn du nicht genau weißt, ob es „schlimm genug" ist – ruf an.'
+  }
+];
+
+// Assessment state
+let assessResults = [];
+let assessAttempts = [0, 0, 0, 0, 0];
+let assessCompleted = [false, false, false, false, false];
+let assessUserAnswers = ['', '', '', '', ''];
+
+/* ============================================
+   INIT
+   ============================================ */
+function init() {
+  renderProgress();
+  renderSelfCheck();
+  renderDragDrop();
+  renderCheckSteps();
+  renderScenarios();
+  renderHelpGrid();
+  renderAssessment();
+}
+
+/* ============================================
+   PROGRESS BAR
+   ============================================ */
+function renderProgress() {
+  const bar = document.getElementById('progressBar');
+  bar.innerHTML = PHASES.map((p, i) => `
+    <div class="progress-step ${p.id < currentPhase ? 'completed' : ''} ${p.id === currentPhase ? 'active' : ''}" 
+         aria-label="Phase ${p.id}: ${p.label}">
+    </div>
+  `).join('');
+}
+
+function goToPhase(n) {
+  document.getElementById(`phase${currentPhase}`).classList.remove('active');
+  currentPhase = n;
+  document.getElementById(`phase${currentPhase}`).classList.add('active');
+  renderProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============================================
+   PHASE 1: Self-Check
+   ============================================ */
+function renderSelfCheck() {
+  const container = document.getElementById('selfCheck');
+  container.innerHTML = SELF_CHECK_ITEMS.map((item, i) => `
+    <div class="checklist-item">
+      <input type="checkbox" id="sc${i}" aria-label="${item}" onchange="updateSelfCheck()">
+      <label for="sc${i}">${item}</label>
+    </div>
+  `).join('');
+}
+
+function updateSelfCheck() {
+  const checked = document.querySelectorAll('#selfCheck input:checked').length;
+  const result = document.getElementById('selfCheckResult');
+  if (checked > 0) {
+    result.style.display = 'block';
+    if (checked <= 3) {
+      result.innerHTML = `<strong>${checked} von ${SELF_CHECK_ITEMS.length}</strong> – Du bist schon recht vorsichtig. Aber weißt du auch, warum manche dieser Daten problematisch sind? Das klären wir gleich.`;
+    } else if (checked <= 6) {
+      result.innerHTML = `<strong>${checked} von ${SELF_CHECK_ITEMS.length}</strong> – Du teilst einiges online. Das machen viele so – aber nicht alles davon ist ungefährlich. Lass uns gemeinsam hinschauen.`;
+    } else {
+      result.innerHTML = `<strong>${checked} von ${SELF_CHECK_ITEMS.length}</strong> – Du hast schon viel geteilt. Keine Panik – aber es lohnt sich, genauer hinzuschauen. Nach diesem Training weißt du, worauf du achten musst.`;
+    }
+  } else {
+    result.style.display = 'none';
+  }
+}
+
+function finishPhase1() {
+  goToPhase(2);
+}
+
+/* ============================================
+   PHASE 2: Drag & Drop
+   ============================================ */
+let selectedDragItem = null;
+let dragDropChecked = false;
+
+function renderDragDrop() {
+  const source = document.getElementById('dragSource');
+  const shuffled = [...DRAG_ITEMS].sort(() => Math.random() - 0.5);
+  source.innerHTML = shuffled.map((item, i) => `
+    <div class="drag-item" draggable="true" data-category="${item.category}" data-text="${item.text}"
+         id="di_${i}" tabindex="0" role="button" aria-label="${item.text}"
+         onclick="selectDragItem(this)" onkeydown="if(event.key==='Enter')selectDragItem(this)">
+      ${item.text}
+    </div>
+  `).join('');
+
+  // Desktop drag events
+  source.querySelectorAll('.drag-item').forEach(item => {
+    item.addEventListener('dragstart', handleDragStart);
+    item.addEventListener('dragend', handleDragEnd);
+  });
+
+  document.querySelectorAll('.drop-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', handleDrop);
+    zone.addEventListener('click', () => { if (selectedDragItem) dropSelectedItem(zone); });
+  });
+
+  // Touch support
+  initTouchDrag();
+}
+
+function handleDragStart(e) {
+  e.dataTransfer.setData('text/plain', e.target.id);
+  e.target.classList.add('dragging');
+}
+
+function handleDragEnd(e) {
+  e.target.classList.remove('dragging');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  const zone = e.currentTarget;
+  zone.classList.remove('over');
+  const id = e.dataTransfer.getData('text/plain');
+  const item = document.getElementById(id);
+  if (item && !dragDropChecked) {
+    zone.appendChild(item);
+    checkAllDropped();
+  }
+}
+
+// Touch drag implementation
+function initTouchDrag() {
+  let touchItem = null;
+  let touchClone = null;
+  let offsetX, offsetY;
+
+  document.querySelectorAll('.drag-item').forEach(item => {
+    item.addEventListener('touchstart', (e) => {
+      if (dragDropChecked) return;
+      touchItem = item;
+      const touch = e.touches[0];
+      const rect = item.getBoundingClientRect();
+      offsetX = touch.clientX - rect.left;
+      offsetY = touch.clientY - rect.top;
+
+      touchClone = item.cloneNode(true);
+      touchClone.style.position = 'fixed';
+      touchClone.style.zIndex = '1000';
+      touchClone.style.width = rect.width + 'px';
+      touchClone.style.opacity = '0.85';
+      touchClone.style.pointerEvents = 'none';
+      document.body.appendChild(touchClone);
+      item.style.opacity = '0.3';
+    }, { passive: true });
+  });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!touchClone) return;
+    const touch = e.touches[0];
+    touchClone.style.left = (touch.clientX - offsetX) + 'px';
+    touchClone.style.top = (touch.clientY - offsetY) + 'px';
+
+    document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('over'));
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (el) {
+      const zone = el.closest('.drop-zone');
+      if (zone) zone.classList.add('over');
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!touchClone || !touchItem) return;
+    document.body.removeChild(touchClone);
+    touchItem.style.opacity = '1';
+
+    const touch = e.changedTouches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (el) {
+      const zone = el.closest('.drop-zone');
+      if (zone && !dragDropChecked) {
+        zone.appendChild(touchItem);
+        checkAllDropped();
+      }
+    }
+
+    touchItem = null;
+    touchClone = null;
+    document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('over'));
+  });
+}
+
+// Tap-to-select fallback
+function selectDragItem(el) {
+  if (dragDropChecked) return;
+  if (selectedDragItem) selectedDragItem.style.outline = '';
+  selectedDragItem = el;
+  el.style.outline = '3px solid var(--clr-primary)';
+}
+
+function dropSelectedItem(zone) {
+  if (!selectedDragItem || dragDropChecked) return;
+  zone.appendChild(selectedDragItem);
+  selectedDragItem.style.outline = '';
+  selectedDragItem = null;
+  checkAllDropped();
+}
+
+function checkAllDropped() {
+  const remaining = document.getElementById('dragSource').children.length;
+  document.getElementById('btnPhase2').disabled = remaining > 0;
+}
+
+function checkDragDrop() {
+  if (dragDropChecked) return;
+  dragDropChecked = true;
+  let correct = 0;
+  const total = DRAG_ITEMS.length;
+
+  document.querySelectorAll('.drop-zone .drag-item').forEach(item => {
+    const zone = item.parentElement;
+    if (zone.dataset.category === item.dataset.category) {
+      item.classList.add('correct');
+      correct++;
+    } else {
+      item.classList.add('wrong');
+      // Move to correct zone after delay
+      setTimeout(() => {
+        const correctZone = document.querySelector(`.drop-zone[data-category="${item.dataset.category}"]`);
+        item.classList.remove('wrong');
+        item.classList.add('correct');
+        correctZone.appendChild(item);
+      }, 1500);
+    }
+  });
+
+  const fb = document.getElementById('dragFeedback');
+  fb.style.display = 'block';
+  if (correct === total) {
+    fb.className = 'feedback-box good';
+    fb.innerHTML = `<strong>Alle richtig! 🎉</strong> Du kannst die Kategorien gut unterscheiden.`;
+  } else {
+    fb.className = 'feedback-box okay';
+    fb.innerHTML = `<strong>${correct} von ${total} richtig.</strong> Die falsch zugeordneten werden jetzt in die richtige Kategorie verschoben. Schau dir an, wo sie hingehören.`;
+  }
+
+  const btn = document.getElementById('btnPhase2');
+  btn.textContent = 'Weiter zum Daten-Check →';
+  btn.disabled = false;
+  btn.onclick = () => goToPhase(3);
+}
+
+/* ============================================
+   PHASE 3: Daten-Check
+   ============================================ */
+let checkStepIndex = 0;
+
+function renderCheckSteps() {
+  const container = document.getElementById('checkSteps');
+  container.innerHTML = CHECK_STEPS.map((step, i) => `
+    <div class="check-step ${i === 0 ? 'active' : ''}" id="cs${i}" onclick="activateCheckStep(${i})" tabindex="0" role="button" aria-label="${step.title}">
+      <div class="check-step-number">${i + 1}</div>
+      <div>
+        <h4>${step.title}</h4>
+        <p>${i === 0 ? step.text : ''}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function activateCheckStep(i) {
+  if (i > checkStepIndex + 1) return;
+  if (i <= checkStepIndex && checkStepIndex < CHECK_STEPS.length) return;
+
+  // Mark previous as done
+  if (i > 0) {
+    document.getElementById(`cs${i - 1}`).classList.remove('active');
+    document.getElementById(`cs${i - 1}`).classList.add('done');
+  }
+
+  checkStepIndex = i;
+  const el = document.getElementById(`cs${i}`);
+  el.classList.add('active');
+  el.querySelector('p').textContent = CHECK_STEPS[i].text;
+
+  if (i === CHECK_STEPS.length - 1) {
+    // Last step
+    setTimeout(() => {
+      el.classList.remove('active');
+      el.classList.add('done');
+      document.getElementById('checkComplete').style.display = 'block';
+      document.getElementById('btnPhase3').style.display = '';
+    }, 2000);
+  }
+}
+
+/* ============================================
+   PHASE 4: Scenarios
+   ============================================ */
+let scenariosCompleted = 0;
+
+function renderScenarios() {
+  const container = document.getElementById('scenarioContainer');
+  container.innerHTML = SCENARIOS.map((sc, si) => `
+    <div class="scenario-card" id="scenario${si}" ${si > 0 ? 'style="display:none;"' : ''}>
+      <div class="scenario-header">
+        <div style="font-size:0.8rem;opacity:0.8;">Szenario ${si + 1} von ${SCENARIOS.length}</div>
+        <h3>${sc.icon} ${sc.title}</h3>
+      </div>
+      <div class="scenario-body">
+        <div class="scenario-situation">${sc.situation}</div>
+        <div id="scOptions${si}">
+          ${sc.options.map((opt, oi) => `
+            <button class="option-btn" onclick="chooseOption(${si}, ${oi})" id="opt_${si}_${oi}">${opt.text}</button>
+          `).join('')}
+        </div>
+        <div class="feedback-box" id="scFeedback${si}"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function chooseOption(si, oi) {
+  const scenario = SCENARIOS[si];
+  const chosen = scenario.options[oi];
+
+  // Disable all options
+  scenario.options.forEach((_, idx) => {
+    const btn = document.getElementById(`opt_${si}_${idx}`);
+    btn.disabled = true;
+    if (idx === oi) {
+      btn.classList.add(chosen.quality === 'good' ? 'selected-correct' : chosen.quality === 'okay' ? 'selected-wrong' : 'selected-wrong');
+    }
+    // Highlight best answer
+    if (scenario.options[idx].quality === 'good' && idx !== oi) {
+      btn.classList.add('best-answer');
+    }
+  });
+
+  // Show feedback
+  const fb = document.getElementById(`scFeedback${si}`);
+  fb.className = `feedback-box ${chosen.quality}`;
+  fb.style.display = 'block';
+  let prefix = chosen.quality === 'good' ? '✅ <strong>Sehr gut!</strong> ' : chosen.quality === 'okay' ? '⚠️ <strong>Geht in die richtige Richtung.</strong> ' : '❌ <strong>Riskant!</strong> ';
+  fb.innerHTML = prefix + chosen.feedback;
+
+  // Add points
+  securityPoints += chosen.points;
+  const display = document.getElementById('securityPoints');
+  display.textContent = securityPoints;
+  display.parentElement.classList.add('points-pop');
+  setTimeout(() => display.parentElement.classList.remove('points-pop'), 400);
+
+  scenariosCompleted++;
+
+  // Show next scenario or finish button
+  setTimeout(() => {
+    if (si + 1 < SCENARIOS.length) {
+      document.getElementById(`scenario${si + 1}`).style.display = '';
+      document.getElementById(`scenario${si + 1}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (scenariosCompleted === SCENARIOS.length) {
+      document.getElementById('btnPhase4').style.display = '';
+    }
+  }, 800);
+}
+
+/* ============================================
+   PHASE 5: Help Network
+   ============================================ */
+function renderHelpGrid() {
+  const grid = document.getElementById('helpGrid');
+  grid.innerHTML = HELP_CONTACTS.map((h, i) => `
+    <div class="help-card" id="hc${i}" tabindex="0" role="button" 
+         aria-label="${h.title}" onclick="toggleHelp(${i})" onkeydown="if(event.key==='Enter')toggleHelp(${i})">
+      <span class="icon">${h.icon}</span>
+      <h4>${h.title}</h4>
+      <p>${h.detail}</p>
+    </div>
+  `).join('');
+}
+
+function toggleHelp(i) {
+  document.getElementById(`hc${i}`).classList.toggle('expanded');
+}
+
+/* ============================================
+   PHASE 6: Assessment
+   ============================================ */
+
+// Task 1: Drag & Drop – Kategorien (simplified: MC selection)
+// Task 2: Sort – Daten-Check Reihenfolge
+// Task 3: MC – Szenario bewerten
+// Task 4: Zuordnung Situation → Anlaufstelle
+// Task 5: Freitext
+
+const ASSESS_TASKS = [
+  {
+    type: 'mc',
+    question: 'Welches dieser Daten ist <strong>hochsensibel</strong>?',
+    options: ['Lieblingsfilm', 'Name der Schule', 'Wohnadresse', 'Vorname'],
+    correct: 2,
+    correctLabel: 'Wohnadresse',
+    hints: [
+      'Überlege: Mit welcher Information könnte dich jemand im echten Leben aufsuchen?',
+      'Hochsensibel bedeutet: Der Schaden bei Missbrauch wäre besonders groß. Schulname ist sensibel, aber nicht hochsensibel.',
+      null
+    ]
+  },
+  {
+    type: 'sort',
+    question: 'Bringe die vier Schritte des <strong>Daten-Checks</strong> in die richtige Reihenfolge.',
+    items: ['Was kann passieren?', 'Wer fragt?', 'Muss ich das?', 'Warum?'],
+    correctOrder: [1, 3, 2, 0], // indices of items in correct order
+    correctLabels: ['Wer fragt?', 'Warum?', 'Muss ich das?', 'Was kann passieren?'],
+    hints: [
+      'Der erste Schritt prüft die Quelle – wer will etwas von dir wissen?',
+      'Die Reihenfolge folgt einer Logik: Erst die Quelle prüfen, dann den Grund verstehen, dann prüfen ob es nötig ist, und zuletzt die Risiken abschätzen.',
+      null
+    ]
+  },
+  {
+    type: 'mc',
+    question: 'Dein Freund tippt seinen echten Namen, seine Schule und sein Problem in einen KI-Chatbot. Was ist daran das <strong>größte Risiko</strong>?',
+    options: [
+      'Die KI gibt vielleicht einen falschen Rat.',
+      'Die persönlichen Daten könnten gespeichert und weiterverarbeitet werden.',
+      'Der Chatbot könnte abstürzen.',
+      'Es kostet Geld.'
+    ],
+    correct: 1,
+    correctLabel: 'Persönliche Daten könnten gespeichert und weiterverarbeitet werden.',
+    hints: [
+      'Es geht um Datenschutz – welches Risiko betrifft die eingegebenen Daten direkt?',
+      'KI-Systeme speichern Eingaben oft für das Training. Echte Namen und Schulen können dann Teil des Datensatzes werden.',
+      null
+    ]
+  },
+  {
+    type: 'mc',
+    question: 'Du wirst online von einer fremden Person unter Druck gesetzt, die ein Foto von dir hat. An wen solltest du dich <strong>zuerst</strong> wenden?',
+    options: [
+      'An die Person selbst – und versuchen, sie umzustimmen.',
+      'An eine Vertrauensperson (Eltern, Vertrauenslehrkraft oder Schulsozialarbeit).',
+      'An niemanden – das ist mir zu peinlich.',
+      'An die Polizei, aber nur wenn es schlimmer wird.'
+    ],
+    correct: 1,
+    correctLabel: 'An eine Vertrauensperson (Eltern, Vertrauenslehrkraft oder Schulsozialarbeit).',
+    hints: [
+      'Alleine handeln kann die Situation verschlimmern. Wer kann am besten einschätzen, was zu tun ist?',
+      'Vertrauenspersonen können Ruhe reinbringen und wissen, welche Schritte als nächstes nötig sind – auch ob die Polizei eingeschaltet werden sollte.',
+      null
+    ]
+  },
+  {
+    type: 'freitext',
+    question: 'Formuliere eine persönliche Regel, die du dir für den Umgang mit deinen Daten im Internet vornimmst.',
+    placeholder: 'Zum Beispiel: „Bevor ich meine Daten irgendwo eingebe, frage ich mich immer …"',
+    correctLabel: '(Individuelle Antwort)',
+    minLength: 20
+  }
+];
+
+function renderAssessment() {
+  const container = document.getElementById('assessmentContainer');
+  container.innerHTML = ASSESS_TASKS.map((task, ti) => {
+    let content = '';
+
+    if (task.type === 'mc') {
+      content = task.options.map((opt, oi) => `
+        <button class="option-btn" onclick="assessMC(${ti}, ${oi})" id="assess_${ti}_${oi}">${opt}</button>
+      `).join('');
+    } else if (task.type === 'sort') {
+      content = `
+        <div class="sort-list" id="sortList${ti}"></div>
+        <p style="font-size:0.82rem;color:var(--clr-text-muted);margin-top:6px;">Verschiebe die Einträge mit den Pfeiltasten ▲ ▼ in die richtige Reihenfolge.</p>
+        <button class="btn btn-secondary" style="margin-top:8px;" onclick="assessSort(${ti})">Reihenfolge prüfen ✓</button>
+      `;
+      // Render sort items after DOM is ready
+      setTimeout(() => renderSortItems(ti), 0);
+    } else if (task.type === 'freitext') {
+      content = `
+        <textarea class="freitext-area" id="freitext${ti}" placeholder="${task.placeholder}" oninput="checkFreitext(${ti})"></textarea>
+        <button class="btn btn-secondary" style="margin-top:8px;" id="freitextBtn${ti}" onclick="assessFreitext(${ti})" disabled>Antwort abgeben ✓</button>
+      `;
+    }
+
+    return `
+      <div class="task-card" id="task${ti}">
+        <div class="task-number">Aufgabe ${ti + 1} von ${ASSESS_TASKS.length}</div>
+        <h4 style="margin:6px 0 8px;">${task.question}</h4>
+        <div class="attempts-display" id="attempts${ti}">
+          <div class="attempt-dot"></div><div class="attempt-dot"></div><div class="attempt-dot"></div>
+        </div>
+        ${content}
+        <div class="hint-box" id="hint${ti}"></div>
+        <div class="feedback-box" id="assessFb${ti}"></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function showAttempts(ti) {
+  const dots = document.querySelectorAll(`#attempts${ti} .attempt-dot`);
+  for (let i = 0; i < assessAttempts[ti]; i++) {
+    if (dots[i]) dots[i].classList.add('used');
+  }
+}
+
+function showHint(ti) {
+  const task = ASSESS_TASKS[ti];
+  if (!task.hints) return;
+  const hintIdx = assessAttempts[ti] - 1;
+  if (hintIdx < task.hints.length && task.hints[hintIdx]) {
+    const hintEl = document.getElementById(`hint${ti}`);
+    hintEl.style.display = 'block';
+    hintEl.textContent = '💡 ' + task.hints[hintIdx];
+  }
+}
+
+function completeTask(ti, userAnswer, isCorrect) {
+  assessCompleted[ti] = true;
+  assessUserAnswers[ti] = userAnswer;
+  assessResults[ti] = {
+    correct: isCorrect,
+    attempts: assessAttempts[ti],
+    userAnswer: userAnswer,
+    correctAnswer: ASSESS_TASKS[ti].correctLabel || ''
+  };
+
+  const completed = assessCompleted.filter(Boolean).length;
+  document.getElementById('assessProgress').textContent = completed;
+
+  if (completed === ASSESS_TASKS.length) {
+    setTimeout(showResults, 600);
+  }
+}
+
+// MC assessment
+function assessMC(ti, oi) {
+  if (assessCompleted[ti]) return;
+  const task = ASSESS_TASKS[ti];
+  assessAttempts[ti]++;
+  showAttempts(ti);
+
+  if (oi === task.correct) {
+    // Correct
+    const btn = document.getElementById(`assess_${ti}_${oi}`);
+    btn.classList.add('selected-correct');
+    task.options.forEach((_, idx) => document.getElementById(`assess_${ti}_${idx}`).disabled = true);
+
+    const fb = document.getElementById(`assessFb${ti}`);
+    fb.className = 'feedback-box good';
+    fb.style.display = 'block';
+    fb.innerHTML = '✅ Richtig!';
+    document.getElementById(`hint${ti}`).style.display = 'none';
+
+    completeTask(ti, task.options[oi], true);
+  } else {
+    document.getElementById(`assess_${ti}_${oi}`).classList.add('selected-wrong');
+    document.getElementById(`assess_${ti}_${oi}`).disabled = true;
+
+    if (assessAttempts[ti] >= 3) {
+      // Show answer
+      task.options.forEach((_, idx) => {
+        document.getElementById(`assess_${ti}_${idx}`).disabled = true;
+        if (idx === task.correct) document.getElementById(`assess_${ti}_${idx}`).classList.add('best-answer');
+      });
+      const fb = document.getElementById(`assessFb${ti}`);
+      fb.className = 'feedback-box okay';
+      fb.style.display = 'block';
+      fb.innerHTML = `Die richtige Antwort ist: <strong>${task.options[task.correct]}</strong>`;
+      document.getElementById(`hint${ti}`).style.display = 'none';
+      completeTask(ti, task.options[oi], false);
+    } else {
+      showHint(ti);
+    }
+  }
+}
+
+// Sort assessment
+// Sort items - stored order per task
+const sortOrders = {};
+
+function renderSortItems(ti) {
+  const task = ASSESS_TASKS[ti];
+  if (!sortOrders[ti]) {
+    sortOrders[ti] = [...task.items.keys()].sort(() => Math.random() - 0.5);
+  }
+  const list = document.getElementById(`sortList${ti}`);
+  if (!list) return;
+  const order = sortOrders[ti];
+  list.innerHTML = order.map((idx, pos) => `
+    <div class="sort-item" data-idx="${idx}">
+      <span class="sort-buttons">
+        <button class="sort-btn" ${pos === 0 ? 'disabled' : ''} onclick="moveSortItem(${ti}, ${pos}, -1)" aria-label="Nach oben">▲</button>
+        <button class="sort-btn" ${pos === order.length - 1 ? 'disabled' : ''} onclick="moveSortItem(${ti}, ${pos}, 1)" aria-label="Nach unten">▼</button>
+      </span>
+      <span>${task.items[idx]}</span>
+    </div>
+  `).join('');
+}
+
+function moveSortItem(ti, pos, dir) {
+  if (assessCompleted[ti]) return;
+  const order = sortOrders[ti];
+  const newPos = pos + dir;
+  if (newPos < 0 || newPos >= order.length) return;
+  [order[pos], order[newPos]] = [order[newPos], order[pos]];
+  renderSortItems(ti);
+}
+
+function assessSort(ti) {
+  if (assessCompleted[ti]) return;
+  const task = ASSESS_TASKS[ti];
+  assessAttempts[ti]++;
+  showAttempts(ti);
+
+  const currentOrder = sortOrders[ti];
+  const isCorrect = task.correctOrder.every((val, idx) => val === currentOrder[idx]);
+  const list = document.getElementById(`sortList${ti}`);
+
+  if (isCorrect) {
+    const fb = document.getElementById(`assessFb${ti}`);
+    fb.className = 'feedback-box good';
+    fb.style.display = 'block';
+    fb.innerHTML = '✅ Richtig! Die Reihenfolge stimmt.';
+    document.getElementById(`hint${ti}`).style.display = 'none';
+    list.innerHTML = currentOrder.map(idx => `
+      <div class="sort-item" style="border-color:var(--clr-success);background:var(--clr-success-light);">
+        <span style="color:var(--clr-success);font-weight:700;">✓</span>
+        <span>${task.items[idx]}</span>
+      </div>
+    `).join('');
+    completeTask(ti, task.correctLabels.join(' → '), true);
+  } else if (assessAttempts[ti] >= 3) {
+    list.innerHTML = task.correctOrder.map(idx => `
+      <div class="sort-item" style="border-color:var(--clr-success);background:var(--clr-success-light);">
+        <span style="color:var(--clr-success);font-weight:700;">✓</span>
+        <span>${task.items[idx]}</span>
+      </div>
+    `).join('');
+    const fb = document.getElementById(`assessFb${ti}`);
+    fb.className = 'feedback-box okay';
+    fb.style.display = 'block';
+    fb.innerHTML = 'Hier siehst du die richtige Reihenfolge.';
+    document.getElementById(`hint${ti}`).style.display = 'none';
+    const userOrder = currentOrder.map(idx => task.items[idx]).join(' → ');
+    completeTask(ti, userOrder, false);
+  } else {
+    showHint(ti);
+  }
+}
+
+// Freitext
+function checkFreitext(ti) {
+  const text = document.getElementById(`freitext${ti}`).value.trim();
+  document.getElementById(`freitextBtn${ti}`).disabled = text.length < ASSESS_TASKS[ti].minLength;
+}
+
+function assessFreitext(ti) {
+  if (assessCompleted[ti]) return;
+  assessAttempts[ti] = 1;
+  showAttempts(ti);
+  const text = document.getElementById(`freitext${ti}`).value.trim();
+  document.getElementById(`freitext${ti}`).disabled = true;
+  document.getElementById(`freitextBtn${ti}`).disabled = true;
+
+  const fb = document.getElementById(`assessFb${ti}`);
+  fb.className = 'feedback-box good';
+  fb.style.display = 'block';
+  fb.innerHTML = '✅ Danke für deine Regel! Eine gute persönliche Regel hilft dir, in kritischen Momenten richtig zu handeln.';
+
+  completeTask(ti, text, true);
+}
+
+/* ============================================
+   RESULTS
+   ============================================ */
+function showResults() {
+  document.getElementById('resultsArea').style.display = 'block';
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  document.getElementById('printDate').textContent = dateStr;
+
+  const correctCount = assessResults.filter(r => r && r.correct).length;
+  document.getElementById('resultsSummary').innerHTML =
+    `${correctCount} von ${ASSESS_TASKS.length} Aufgaben korrekt gelöst<br>
+     <span style="font-size:0.9rem;font-weight:400;">🛡️ ${securityPoints} von 15 Sicherheitspunkten im Szenarien-Parcours</span>`;
+
+  const tbody = document.getElementById('resultsBody');
+  tbody.innerHTML = assessResults.map((r, i) => {
+    if (!r) return '';
+    return `<tr>
+      <td>Aufgabe ${i + 1}</td>
+      <td style="max-width:180px;word-break:break-word;">${truncate(r.userAnswer, 60)}</td>
+      <td>${truncate(r.correctAnswer, 60)}</td>
+      <td>${r.attempts}</td>
+      <td>${r.correct ? '✅' : '❌'}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+}
+
+function truncate(str, max) {
+  return str.length > max ? str.substring(0, max) + '…' : str;
+}
+
+function printResults() {
+  window.print();
+}
+
+function downloadMarkdown() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const isoDate = now.toISOString().slice(0, 10);
+  const correctCount = assessResults.filter(r => r && r.correct).length;
+
+  let md = `# Datenschutz-Scout – Zusammenfassung\n`;
+  md += `**Fach:** Medienbildung | **Klasse:** 7–10 | **Datum:** ${dateStr}\n\n`;
+
+  md += `## Lernziele\n`;
+  md += `- Persönliche Daten in Kategorien einteilen können (harmlos, sensibel, hochsensibel)\n`;
+  md += `- Den Daten-Check (4 Schritte) anwenden, bevor Daten online eingegeben werden\n`;
+  md += `- Risiken in Alltagssituationen erkennen (Apps, Chats, Social Media, KI-Chatbots, Gaming)\n`;
+  md += `- Wissen, an wen man sich bei Problemen wenden kann\n\n`;
+
+  md += `## Zusammenfassung der wichtigsten Inhalte\n\n`;
+  md += `### Datenkategorien\n`;
+  md += `Nicht alle Daten sind gleich: Lieblingsfarbe = eher harmlos, Handynummer = sensibel, Wohnadresse/Passwort = hochsensibel. Je sensibler, desto vorsichtiger.\n\n`;
+  md += `### Der Daten-Check\n`;
+  md += `Vier Fragen vor jeder Dateneingabe: 1) Wer fragt? 2) Warum? 3) Muss ich das? 4) Was kann passieren?\n\n`;
+  md += `### Alltagsrisiken\n`;
+  md += `Apps verlangen oft mehr Berechtigungen als nötig. Gewinnspiele in Chats sind meist Betrug. Fotos dürfen nicht ohne Zustimmung gepostet werden. KI-Chatbots speichern Eingaben – keine echten Namen eingeben. Online-Bekanntschaften verdienen nicht automatisch Vertrauen.\n\n`;
+  md += `### Hilfe-Netzwerk\n`;
+  md += `Anlaufstellen: Lehrkräfte, Vertrauenslehrkräfte, Schulsozialarbeit, Eltern, erfahrene ältere Schülerinnen und Schüler, Nummer gegen Kummer (116 111).\n\n`;
+
+  md += `## Meine Ergebnisse\n\n`;
+  md += `| Aufgabe | Meine Antwort | Korrekte Lösung | Versuche | Status |\n`;
+  md += `|---------|---------------|-----------------|----------|--------|\n`;
+  assessResults.forEach((r, i) => {
+    if (!r) return;
+    md += `| Aufgabe ${i + 1} | ${r.userAnswer.replace(/\|/g, '/')} | ${r.correctAnswer.replace(/\|/g, '/')} | ${r.attempts} | ${r.correct ? '✓' : '✗'} |\n`;
+  });
+
+  md += `\n**Gesamtergebnis:** ${correctCount} von ${ASSESS_TASKS.length} Aufgaben korrekt gelöst.\n`;
+  md += `**Sicherheitspunkte:** ${securityPoints} von 15 im Szenarien-Parcours.\n\n`;
+
+  md += `## Weiterarbeit\n`;
+  md += `Diese Zusammenfassung kann als Grundlage für die Weiterarbeit mit einer generativen KI (z. B. Claude) verwendet werden, etwa zum Erstellen von:\n`;
+  md += `- Lernquiz\n`;
+  md += `- Interaktiven Lernkarten (Flashcards)\n`;
+  md += `- Podcasts oder Erklärvideos\n`;
+  md += `- Infografiken\n`;
+  md += `- Individuellen Übungsaufgaben\n`;
+
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Datenschutz-Scout_Zusammenfassung_${isoDate}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================
+   INITIALIZE
+   ============================================ */
+init();
+</script>
+</body>
+</html>
